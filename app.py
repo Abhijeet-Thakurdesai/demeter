@@ -36,11 +36,13 @@ def createFood():
     db.session.add(food)
     db.session.commit()
     return food_schema.jsonify(food), 201
- 
+
 @app.route('/food/<zipcode>', methods=['GET'])
 def get_product(zipcode):
-    food = Food.query.get(zipcode)
-    return food_schema.jsonify(food)
+    food = db.session.query(Food).filter(Food.zipcode == zipcode).all()
+    food = food_schema.dump(food, many=True)
+    return jsonify(food), 200
+
 
 
 if __name__ == '__main__':
