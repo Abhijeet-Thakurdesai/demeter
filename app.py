@@ -9,14 +9,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
-
 class Food(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     location = db.Column(db.String(500))
     zipcode = db.Column(db.BIGINT())
-
 
 class FoodSchema(ma.Schema):
     class Meta:
@@ -25,7 +23,6 @@ class FoodSchema(ma.Schema):
 # Init schema
 food_schema = FoodSchema()
 foods_schema = FoodSchema(many=True)
-
 
 @app.route('/food', methods=['POST'])
 def createFood():
@@ -42,8 +39,6 @@ def get_product(zipcode):
     food = db.session.query(Food).filter(Food.zipcode == zipcode).all()
     food = food_schema.dump(food, many=True)
     return jsonify(food), 200
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)
