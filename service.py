@@ -7,11 +7,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'psssshhhhh!'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'cockroachdb://shekhar:password@gcp-us-west1.test-db-01.crdb.io:26257/defaultdb?sslmode=verify-full&sslrootcert=./test-db-01-ca.crt'
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
+# gcp-us-west1.test-db-01.crdb.io
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -27,7 +28,7 @@ class Food(db.Model):
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     location = db.Column(db.String(500))
     zipcode = db.Column(db.BIGINT())
-    user_id = db.Column(db.Integer)
+    user_id = db.Column(db.String(200))
 
 
 class FoodSchema(ma.Schema):
@@ -37,7 +38,7 @@ class FoodSchema(ma.Schema):
 
 class UserSchema(ma.Schema):
     class Meta:
-        fields = ('public_id', 'username', 'admin')
+        fields = ('public_id', 'username', 'admin',)
 
 
 # Init schema
@@ -45,7 +46,6 @@ food_schema = FoodSchema()
 foods_schema = FoodSchema(many=True)
 user_schema = UserSchema()
 user_schema = UserSchema(many=True)
-db.create_all()
 
 hashed_password_admin = generate_password_hash("admin", method='sha256')
 
@@ -195,4 +195,5 @@ def get_product(current_user, zipcode):
 
 
 if __name__ == '__main__':
+    db.create_all()
     app.run(debug=True)
