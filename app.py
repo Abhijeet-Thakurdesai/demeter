@@ -1,5 +1,5 @@
 import datetime
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 
@@ -18,8 +18,22 @@ class Food(db.Model):
 
 class FoodSchema(ma.ModelSchema):
     class Meta:
-        model = Food
+        fields = ('id', 'name', 'description', 'date', 'location', 'zipcode')
 
-db.create_all()
+food_schema = FoodSchema()
+foods_schema = FoodSchema(many=True)
+#db.create_all()
+
+@app.route('/food', methods=['POST'])
+def createFood():
+    name = request.json["name"]
+    location = request.json["location"]
+    zipcode = request.json["zipcode"]
+    food = Food(name=name, location=location, zipcode=zipcode)
+    db.session.add(food)
+    db.session.commit()
+    return food_schema.jsonify(food), 201
+
+
 if __name__ == '__main__':
     app.run(debug=True)
