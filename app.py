@@ -1,5 +1,5 @@
 import datetime
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 
@@ -22,12 +22,21 @@ class FoodSchema(ma.Schema):
     class Meta:
         fields = ('id', 'name', 'description', 'date', 'location', 'zipcode')
 
-
 # Init schema
 food_schema = FoodSchema()
 foods_schema = FoodSchema(many=True)
 
 
+@app.route('/food', methods=['POST'])
+def createFood():
+    name = request.json["name"]
+    location = request.json["location"]
+    zipcode = request.json["zipcode"]
+    food = Food(name=name, location=location, zipcode=zipcode)
+    db.session.add(food)
+    db.session.commit()
+    return food_schema.jsonify(food), 201
+ 
 @app.route('/food/<zipcode>', methods=['GET'])
 def get_product(zipcode):
     food = Food.query.get(zipcode)
