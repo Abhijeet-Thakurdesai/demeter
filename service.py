@@ -4,8 +4,10 @@ from flask import Flask, jsonify, request, make_response
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 app.config['SECRET_KEY'] = 'psssshhhhh!'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'cockroachdb://shekhar:password@gcp-us-west1.test-db-01.crdb.io:26257/defaultdb?sslmode=verify-full&sslrootcert=./test-db-01-ca.crt'
 
