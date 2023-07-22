@@ -4,6 +4,6 @@ pyjwt
 Flask==0.12.2
 gunicorn==19.7.1
 cockroachdb==0.1.3
-sqlalchemy==1.1.18
+sqlalchemy==1.3.0
 marshmallow-sqlalchemy==0.17.2
 flask-cors
